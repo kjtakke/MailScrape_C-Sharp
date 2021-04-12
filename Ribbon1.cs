@@ -8,7 +8,6 @@ namespace WebScrape
 {
     public partial class Ribbon1
     {
-
         Main MyScraoe = new Main();
         private void Ribbon1_Load(object sender, RibbonUIEventArgs e)
         {
