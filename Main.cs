@@ -436,7 +436,8 @@ namespace WebScrape
             Microsoft.Office.Interop.Outlook.Explorer objView = myOlApp.ActiveExplorer();
             int k = 1;
             int i = 1; //NOT SURE IF THIS SHOULD BE ZERO
-            foreach (Microsoft.Office.Interop.Outlook.MailItem olMail in objView.Selection) { i += 1; }
+            foreach (Microsoft.Office.Interop.Outlook.MailItem olMail in objView.Selection) { try { i += 1; } finally { } }
+
             UboundSelectedMailItems = i - 1;
             Selected_mail_items = ResizeArray(ref Selected_mail_items, 0, i - 2, 18, 0);
             Selected_mail_items[0, 0] = "To";
