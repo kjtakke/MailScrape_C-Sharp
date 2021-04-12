@@ -13,10 +13,6 @@ using System.Text.RegularExpressions;
 
 
 
-//MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-//MessageBox.Show(str, "Folder Choice:", buttons);
-
-
 namespace WebScrape
 
 {
@@ -46,8 +42,8 @@ namespace WebScrape
                     {
                         if (olAttachment.FileName != "")
                         {
-                            //FilePathConverter = File_Exists(filePathPicked + "\\" + olAttachment.FileName.ToString());
-                            FilePathConverter = filePathPicked + "\\" + olAttachment.FileName.ToString();
+                            FilePathConverter = File_Exists(filePathPicked + "\\" + olAttachment.FileName.ToString());
+                            //FilePathConverter = filePathPicked + "\\" + olAttachment.FileName.ToString();
                             olAttachment.SaveAsFile(FilePathConverter);
                         }
                     }
@@ -59,50 +55,105 @@ namespace WebScrape
 
         string File_Exists(string fielPath)
         {
+            string[] strArray0 = Directory.GetFiles("C:\\Users\\krist\\Desktop\\dsfgf"); // RETURNS A LIST OF FILES >> Need to loop through each one
+
+
 
             string strFileExists; bool fileExists; string temp_FileName; string temp_FileName_Placeholder;
             string temp_FileExt; string temp_path; int i;
+            strFileExists = fielPath;
+            List<string> temp_FileArray = new List<string>(strFileExists.Split(new string[] { "." }, StringSplitOptions.None));
+            temp_FileExt = temp_FileArray.Last().ToString();
+            temp_FileName = temp_FileArray.First().ToString();
+            temp_FileArray.Clear();
+            temp_FileArray = new List<string>(fielPath.Split(new string[] { "\\" }, StringSplitOptions.None));
+            temp_path = "";
 
-            strFileExists = Directory.GetFiles(fielPath, "*.*").ToString(); //Need to fix  Need to change to a bool
-            if (strFileExists != "")
+            for (i = 0; i < temp_FileArray.Count - 1; i++)
             {
-                List<string> temp_FileArray = new List<string>(strFileExists.Split(new string[] { "." }, StringSplitOptions.None));
-                temp_FileExt = temp_FileArray.Last().ToString();
-                temp_FileName = temp_FileArray.First().ToString();
-                temp_FileArray.Clear();
-                temp_FileArray = new List<string>(fielPath.Split(new string[] { "\\" }, StringSplitOptions.None));
-                temp_path = "";
+                temp_path = temp_path + temp_FileArray[i].ToString() + "\\";
+            }
 
-                for (i = 0; i < temp_FileArray.Count - 1; i++)
-                {
-                    temp_path = temp_path + temp_FileArray[i].ToString() + "\\";
-                }
+            try 
+            {
+                //strFileExists = Directory.GetFiles(temp_FileName, "." + temp_FileExt).ToString();
 
+                string[] strArray = Directory.GetFiles(fielPath);
+                strFileExists = strArray[0];
                 fileExists = true;
                 temp_FileName_Placeholder = temp_FileName;
                 i = 1;
 
-
                 do
                 {
                     temp_FileName_Placeholder = temp_FileName + "(" + i + ")";
-
-                    if (Directory.GetFiles(fielPath, "*.*").ToString() + temp_FileExt != "")
+                    try
                     {
+                        string[] strArray2 = Directory.GetFiles(temp_FileName_Placeholder);
+                        strFileExists = strArray2[0];
                         i = i + 1;
                     }
-                    else
+                    catch
                     {
-                        fielPath = temp_path + temp_FileName_Placeholder + temp_FileExt;
+                        strFileExists = fielPath;
+                        fielPath = temp_FileName_Placeholder + "." + temp_FileExt;
                         fileExists = false;
+                        return fielPath;
                     }
-                } while (fileExists = true);
+                } while (fileExists == true);
             }
-            else
-            {
-                fielPath = fielPath;
 
-            }
+            catch 
+            {
+
+
+                return fielPath;
+            } 
+
+
+
+
+
+            //if (strFileExists != "")
+            //{
+            //    List<string> temp_FileArray = new List<string>(strFileExists.Split(new string[] { "." }, StringSplitOptions.None));
+            //    temp_FileExt = temp_FileArray.Last().ToString();
+            //    temp_FileName = temp_FileArray.First().ToString();
+            //    temp_FileArray.Clear();
+            //    temp_FileArray = new List<string>(fielPath.Split(new string[] { "\\" }, StringSplitOptions.None));
+            //    temp_path = "";
+
+            //    for (i = 0; i < temp_FileArray.Count - 1; i++)
+            //    {
+            //        temp_path = temp_path + temp_FileArray[i].ToString() + "\\";
+            //    }
+
+            //    fileExists = true;
+            //    temp_FileName_Placeholder = temp_FileName;
+            //    i = 1;
+
+
+            //    do
+            //    {
+            //        temp_FileName_Placeholder = temp_FileName + "(" + i + ")";
+
+
+            //        try { strFileExists = Directory.GetFiles(fielPath, "*.*").ToString() + fileExists;
+            //            i = i + 1;
+            //        }
+            //        catch { strFileExists = fielPath;
+            //            fielPath = temp_FileName_Placeholder + "." + temp_FileExt;
+            //            fileExists = false;
+            //            return fielPath;
+            //        }
+
+            //    } while (fileExists == true);
+            //}
+            //else
+            //{
+            //    fielPath = fielPath;
+
+            //}
             return fielPath;
         }
 
