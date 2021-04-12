@@ -18,7 +18,7 @@ namespace WebScrape
         private void CSV_Click(object sender, RibbonControlEventArgs e)
         {
             Main mn = new Main();
-            mn.Attachments();
+            mn.CSV();
         }
     }
 }

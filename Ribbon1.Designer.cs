@@ -37,8 +37,8 @@ namespace WebScrape
         {
             this.ribbon = this.Factory.CreateRibbonTab();
             this.group1 = this.Factory.CreateRibbonGroup();
-            this.button1 = this.Factory.CreateRibbonButton();
             this.CSV = this.Factory.CreateRibbonButton();
+            this.button1 = this.Factory.CreateRibbonButton();
             this.ribbon.SuspendLayout();
             this.group1.SuspendLayout();
             this.SuspendLayout();
@@ -56,16 +56,16 @@ namespace WebScrape
             this.group1.Label = "No Attachments";
             this.group1.Name = "group1";
             // 
-            // button1
-            // 
-            this.button1.Label = "";
-            this.button1.Name = "button1";
-            // 
             // CSV
             // 
             this.CSV.Label = "CSV";
             this.CSV.Name = "CSV";
             this.CSV.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.CSV_Click);
+            // 
+            // button1
+            // 
+            this.button1.Label = "";
+            this.button1.Name = "button1";
             // 
             // Ribbon1
             // 
