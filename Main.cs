@@ -12,7 +12,6 @@ using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-
 namespace WebScrape
 
 {
@@ -81,12 +80,11 @@ namespace WebScrape
             foreach (Microsoft.Office.Interop.Outlook.MailItem olMail in objView.Selection) 
             { 
 
-                
-
                 string subj = olMail.Subject.ToString();
                 string FileName = olMail.SentOn.ToString("yyddmm-hhmmss") + "-" +
                                   olMail.SenderEmailAddress.ToString() + "-" +
                                   subj;
+                
                 FileName = FileName.Replace("\\", " ");
                 FileName = FileName.Replace("/", " ");
                 FileName = FileName.Replace(".", " ");
@@ -98,10 +96,8 @@ namespace WebScrape
                 FileName = FileName.Replace("<", " ");
                 FileName = FileName.Replace(">", " ");
 
-
                 string savepath = filePathPicked + "\\" + FileName + ".txt";
                 olMail.SaveAs(savepath, 0);
-
             };
         }
 
@@ -140,7 +136,6 @@ namespace WebScrape
                             FileName = FileName.Replace("<", " ");
                             FileName = FileName.Replace(">", " ");
 
-
                             Directory.CreateDirectory(filePathPicked + "\\" + FileName + "\\");
                             FilePathConverter = File_Exists(filePathPicked + "\\" + FileName + "\\" + olAttachment.FileName.ToString());
                             olAttachment.SaveAsFile(FilePathConverter);
@@ -149,10 +144,7 @@ namespace WebScrape
                 }
                 finally { }
             }
-
         }
-
-
 
         public void JSONPlane()
         {
@@ -256,7 +248,6 @@ namespace WebScrape
                 for(int j = 0; j < 17; j++)
                 {
                     newRow[j] = Selected_mail_items[i, j];
-
                 }
                 table.Rows.Add(newRow);
             }
@@ -266,7 +257,7 @@ namespace WebScrape
             string csvTbl = ConvertToCSV(table);
             System.IO.File.WriteAllText(FilePath, ConvertToCSV(table));
         }
-
+        
         string ConvertToCSV(DataTable dt)
         {
             StringBuilder sb = new StringBuilder("", 50);
