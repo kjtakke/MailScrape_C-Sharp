@@ -10,8 +10,7 @@ using System.Web;
 using System.Data;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
-using System.Text;
-
+using System.Threading.Tasks;
 
 
 namespace WebScrape
@@ -28,98 +27,204 @@ namespace WebScrape
         private string filePathPicked;
         private int UboundSelectedMailItems;
 
+        public void save_EmailsWithAttments()
+        {
+            save_Emails();
+
+            Microsoft.Office.Interop.Outlook.Application myOlApp = new Microsoft.Office.Interop.Outlook.Application();
+            Microsoft.Office.Interop.Outlook.Explorer objView = myOlApp.ActiveExplorer();
+
+            foreach (Microsoft.Office.Interop.Outlook.MailItem olMail in objView.Selection)
+            {
+                string FilePathConverter;
+                try
+                {
+
+                    foreach (Microsoft.Office.Interop.Outlook.Attachment olAttachment in olMail.Attachments)
+                    {
+                        if (olAttachment.FileName != "")
+                        {
+
+                            string subj = olMail.Subject.ToString();
+                            if (subj.Length > 20) { subj = subj.Substring(0, 20); }
+
+                            string FileName = olMail.SentOn.ToString("yyddmm-hhmmss") + "-" +
+                                  olMail.SenderEmailAddress.ToString() + "-" +
+                                  subj;
+                            FileName = FileName.Replace("\\", " ");
+                            FileName = FileName.Replace("/", " ");
+                            FileName = FileName.Replace(".", " ");
+                            FileName = FileName.Replace("|", " ");
+                            FileName = FileName.Replace("*", " ");
+                            FileName = FileName.Replace("*", " ");
+                            FileName = FileName.Replace("?", " ");
+                            FileName = FileName.Replace(":", " ");
+                            FileName = FileName.Replace("<", " ");
+                            FileName = FileName.Replace(">", " ");
+
+
+                            Directory.CreateDirectory(filePathPicked + "\\" + FileName + "\\");
+                            FilePathConverter = File_Exists(filePathPicked + "\\" + FileName + "\\" + olAttachment.FileName.ToString());
+                            olAttachment.SaveAsFile(FilePathConverter);
+                        }
+                    }
+                }
+                finally { }
+            }
+        }
+
+
+        public void save_Emails()
+        {
+            Microsoft.Office.Interop.Outlook.Application myOlApp = new Microsoft.Office.Interop.Outlook.Application();
+            Microsoft.Office.Interop.Outlook.Explorer objView = myOlApp.ActiveExplorer();
+            filePathPicked = FolderPicker();
+            foreach (Microsoft.Office.Interop.Outlook.MailItem olMail in objView.Selection) 
+            { 
+
+                
+
+                string subj = olMail.Subject.ToString();
+                string FileName = olMail.SentOn.ToString("yyddmm-hhmmss") + "-" +
+                                  olMail.SenderEmailAddress.ToString() + "-" +
+                                  subj;
+                FileName = FileName.Replace("\\", " ");
+                FileName = FileName.Replace("/", " ");
+                FileName = FileName.Replace(".", " ");
+                FileName = FileName.Replace("|", " ");
+                FileName = FileName.Replace("*", " ");
+                FileName = FileName.Replace("*", " ");
+                FileName = FileName.Replace("?", " ");
+                FileName = FileName.Replace(":", " ");
+                FileName = FileName.Replace("<", " ");
+                FileName = FileName.Replace(">", " ");
+
+
+                string savepath = filePathPicked + "\\" + FileName + ".txt";
+                olMail.SaveAs(savepath, 0);
+
+            };
+        }
+
+        public void JSON()
+        {
+            JSONPlane();
+
+            Microsoft.Office.Interop.Outlook.Application myOlApp = new Microsoft.Office.Interop.Outlook.Application();
+            Microsoft.Office.Interop.Outlook.Explorer objView = myOlApp.ActiveExplorer();
+
+            foreach (Microsoft.Office.Interop.Outlook.MailItem olMail in objView.Selection)
+            {
+                string FilePathConverter;
+                try
+                {
+
+                    foreach (Microsoft.Office.Interop.Outlook.Attachment olAttachment in olMail.Attachments)
+                    {
+                        if (olAttachment.FileName != "")
+                        {
+
+                            string subj = olMail.Subject.ToString();
+                            if (subj.Length > 20) { subj = subj.Substring(0, 20); }
+
+                            string FileName = olMail.SentOn.ToString("yyddmm-hhmmss") + "-" +
+                                  olMail.SenderEmailAddress.ToString() + "-" +
+                                  subj;
+                            FileName = FileName.Replace("\\", " ");
+                            FileName = FileName.Replace("/", " ");
+                            FileName = FileName.Replace(".", " ");
+                            FileName = FileName.Replace("|", " ");
+                            FileName = FileName.Replace("*", " ");
+                            FileName = FileName.Replace("*", " ");
+                            FileName = FileName.Replace("?", " ");
+                            FileName = FileName.Replace(":", " ");
+                            FileName = FileName.Replace("<", " ");
+                            FileName = FileName.Replace(">", " ");
+
+
+                            Directory.CreateDirectory(filePathPicked + "\\" + FileName + "\\");
+                            FilePathConverter = File_Exists(filePathPicked + "\\" + FileName + "\\" + olAttachment.FileName.ToString());
+                            olAttachment.SaveAsFile(FilePathConverter);
+                        }
+                    }
+                }
+                finally { }
+            }
+
+        }
+
+
+
         public void JSONPlane()
         {
             Mail_Scrape();
-
             filePathPicked = FolderPicker();
 
-            for(int i = 1; i < UboundSelectedMailItems; i++)
+            for(int i = 1; i < UboundSelectedMailItems + 1; i++)
             {
                 exportString = "";
                 string toStr = jsonArray(Selected_mail_items[i, 0], ";");
                 string ccStr = jsonArray(Selected_mail_items[i, 1], ";");
-
 
                 exportString = exportString + "{" + "\r" + "\u0020" +
                                               "\"people\" : {" + "\r" + "\u0020" + "\u0020" +
                                               "\"to\" : " + toStr + "," + "\r" + "\u0020" + "\u0020" +
                                               "\"cc\" : " + ccStr + "\r" + "\u0020" +
                                               "}," + "\r" + "\u0020";
+                exportString = exportString +
+                                "\"names\" : {" + "\r" + "\u0020" + "\u0020" +
+                                    "\"ReplyRecipientNames\" : \"" + Selected_mail_items[i, 2] + "\"," + "\r" + "\u0020" + "\u0020" +
+                                    "\"SenderName\" : \"" + Selected_mail_items[i, 4] + "\"," + "\r" + "\u0020" + "\u0020" +
+                                    "\"SentOnBehalfOfName\" : \"" + Selected_mail_items[i, 5] + "\"," + "\r" + "\u0020" + "\u0020" +
+                                    "\"ReceivedOnBehalfOfName\" : \"" + Selected_mail_items[i, 16] + "\"," + "\r" + "\u0020" + "\u0020" +
+                                    "\"ReceivedByName\" : \"" + Selected_mail_items[i, 15] + "\"" + "\r" + "\u0020" +
+                                "}," + "\r" + "\u0020";
+                exportString = exportString +
+                                "\"time\" : {" + "\r" + "\u0020" + "\u0020" +
+                                    "\"CreationTime\" : \"" + Selected_mail_items[i, 10] + "\"," + "\r" + "\u0020" + "\u0020" +
+                                    "\"LastModificationTime\" : \"" + Selected_mail_items[i, 11] + "\"," + "\r" + "\u0020" + "\u0020" +
+                                    "\"SentOn\" : \"" + Selected_mail_items[i, 12] + "\"," + "\r" + "\u0020" + "\u0020" +
+                                    "\"ReceivedTime\" : \"" + Selected_mail_items[i, 13] + "\"" + "\r" + "\u0020" +
+                                "}," + "\r" + "\u0020";
+                exportString = exportString +
+                                "\"metadata\" : {" + "\r" + "\u0020" + "\u0020" +
+                                    "\"SenderEmailType\" : \"" + Selected_mail_items[i, 6] + "\"," + "\r" + "\u0020" + "\u0020" +
+                                    "\"Size\" : " + Selected_mail_items[i, 8] + "," + "\r" + "\u0020" + "\u0020" +
+                                    "\"UnRead\" : " + Selected_mail_items[i, 9] + "," + "\r" + "\u0020" + "\u0020" +
+                                    "\"Sent\" : " + Selected_mail_items[i, 7] + "," + "\r" + "\u0020" + "\u0020" +
+                                    "\"Importance\" : " + Selected_mail_items[i, 14] + "\r" + "\u0020" +
+                                "}," + "\r" + "\u0020";
+                exportString = exportString +
+                                "\"text\" : {" + "\r" + "\u0020" + "\u0020" +
+                                        "\"Subject\" : \"" + Selected_mail_items[i, 17].Replace("\"", "'") + "\"," + "\r" + "\u0020" + "\u0020" +
+                                        "\"Body\" : \"" + Selected_mail_items[i, 18].Replace("\"", "'") + "\"" + "\r" + "\u0020" +
+                                    "}" + "\r" +
+                            "}";
 
+                string subj = Selected_mail_items[i, 17];
+                if (subj.Length > 20){subj = subj.Substring(0, 20);}
 
-                //        exportString = exportString +
-                //                        """names"" : {" + "\r" + "\u0020" + "\u0020" +
-                //                            "\"ReplyRecipientNames\" : \"" + olMail.ReplyRecipientNames + "\"," + "\r" + "\u0020" + "\u0020" +
-                //                            "\"SenderName\" : """ + olMail.SenderName + "\"," + "\r" + "\u0020" + "\u0020" +
-                //                            "\"SentOnBehalfOfName\" : \"" + olMail.SentOnBehalfOfName + "\"," + "\r" + "\u0020" + "\u0020" +
-                //                            "\"ReceivedOnBehalfOfName\" : \"" + olMail.ReceivedOnBehalfOfName + "\"," + "\r" + "\u0020" + "\u0020" +
-                //                            "\"ReceivedByName\" : \"" + olMail.ReceivedByName + "\"" + "\r" + "\u0020" +
-                //                        "}," + "\r" + "\u0020";
+                string FileName = Selected_mail_items[i, 12] + "-" + 
+                                  Selected_mail_items[i, 4] + "-" +
+                                  subj; 
 
+                FileName = FileName.Replace("\\", " ");
+                FileName = FileName.Replace("/", " ");
+                FileName = FileName.Replace(".", " ");
+                FileName = FileName.Replace("|", " ");
+                FileName = FileName.Replace("*", " ");
+                FileName = FileName.Replace("*", " ");
+                FileName = FileName.Replace("?", " ");
+                FileName = FileName.Replace(":", " ");
+                FileName = FileName.Replace("<", " ");
+                FileName = FileName.Replace(">", " ");
 
-                //        exportString = exportString +
-                //                        """time"" : {" + "\r" + "\u0020" + "\u0020" +
-                //                            """CreationTime"" : """ + olMail.CreationTime + """," + "\r" + "\u0020" + "\u0020" +
-                //                            """LastModificationTime"" : """ + olMail.LastModificationTime + """," + "\r" + "\u0020" + "\u0020" +
-                //                            """SentOn"" : """ + olMail.SentOn + """," + "\r" + "\u0020" + "\u0020" +
-                //                            """ReceivedTime"" : """ + olMail.ReceivedTime + """" + "\r" + "\u0020" +
-                //                        "}," + "\r" + "\u0020";
-
-
-                //        exportString = exportString +
-                //                        """metadata"" : {" + "\r" + "\u0020" + "\u0020" +
-                //                            """SenderEmailType"" : """ + olMail.SenderEmailType + """," + "\r" + "\u0020" + "\u0020" +
-                //                            """Size"" : " + olMail.Size + "," + "\r" + "\u0020" + "\u0020" +
-                //                            """UnRead"" : " + olMail.UnRead + "," + "\r" + "\u0020" + "\u0020" +
-                //                            """Sent"" : " + olMail.Sent + "," + "\r" + "\u0020" + "\u0020" +
-                //                            """Importance"" : " + olMail.Importance + "\r" + "\u0020" +
-                //                        "}," + "\r" + "\u0020";
-
-
-                //        exportString = exportString +
-                //                        """text"" : {" + "\r" + "\u0020" + "\u0020" +
-                //                                """Subject"" : """ + Replace(olMail.Subject, """", "'") + """," + "\r" + "\u0020" + "\u0020" +
-                //                                """Body"" : """ + Replace(olMail.Body, """", "'") + """" + "\r" + "\u0020" +
-                //                            "}" + "\r" +
-                //                    "}";
-
-
-                //Export File
-
+                using (StreamWriter writer = new StreamWriter(filePathPicked + "\\" + FileName + ".json"))
+                {
+                    writer.WriteLine(exportString);
+                }
             }
-
-
-
-
-
-
-
-            //        FileName = Format(olMail.SentOn, "yymmdd") & "-" & Format(olMail.ReceivedTime, "hhmmss") & "-" & olMail.SenderName & "-" & Left(olMail.Subject, 30)
-            //        'Remove reserved characters fron teh file name
-            //        FileName = Replace(FileName, "\", " ")
-            //        FileName = Replace(FileName, "/", " ")
-            //        FileName = Replace(FileName, ".", " ")
-            //        FileName = Replace(FileName, "|", " ")
-            //        FileName = Replace(FileName, "*", " ")
-            //        FileName = Replace(FileName, "*", " ")
-            //        FileName = Replace(FileName, "?", " ")
-            //        FileName = Replace(FileName, ":", " ")
-            //        FileName = Replace(FileName, "<", " ")
-            //        FileName = Replace(FileName, ">", " ")
-
-
-            //    Next olMail
-
         }
-
-
-
-
-
-
-
-
 
         public void CSV()
         {
@@ -371,8 +476,10 @@ namespace WebScrape
                     if (olMail.UnRead == null) { Selected_mail_items[k, 9] = ""; } else { Selected_mail_items[k, 9] = olMail.UnRead.ToString(); }
                     if (olMail.CreationTime == null) { Selected_mail_items[k, 10] = ""; } else { Selected_mail_items[k, 10] = olMail.CreationTime.ToString(); }
                     if (olMail.LastModificationTime == null) { Selected_mail_items[k, 11] = ""; } else { Selected_mail_items[k, 11] = olMail.LastModificationTime.ToString(); }
-                    if (olMail.SentOn == null) { Selected_mail_items[k, 12] = ""; } else { Selected_mail_items[k, 12] = olMail.SentOn.ToString(); }
-                    if (olMail.ReceivedTime == null) { Selected_mail_items[k, 13] = ""; } else { Selected_mail_items[k, 13] = olMail.ReceivedTime.ToString(); }
+
+                    if (olMail.SentOn == null) { Selected_mail_items[k, 12] = ""; } else { Selected_mail_items[k, 12] = olMail.SentOn.ToString("yyddmm-hhmmss"); }
+
+                    if (olMail.ReceivedTime == null) { Selected_mail_items[k, 13] = ""; } else { Selected_mail_items[k, 13] = olMail.ReceivedTime.ToString("yyddmm-hhmmss"); }
                     if (olMail.Importance == null) { Selected_mail_items[k, 14] = ""; } else { Selected_mail_items[k, 14] = olMail.Importance.ToString(); }
                     if (olMail.ReceivedByName == null) { Selected_mail_items[k, 15] = ""; } else { Selected_mail_items[k, 15] = olMail.ReceivedByName.ToString(); }
                     if (olMail.ReceivedOnBehalfOfName == null) { Selected_mail_items[k, 16] = ""; } else { Selected_mail_items[k, 16] = olMail.ReceivedOnBehalfOfName.ToString(); }
