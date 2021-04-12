@@ -60,7 +60,6 @@ namespace WebScrape
                             FileName = FileName.Replace("<", " ");
                             FileName = FileName.Replace(">", " ");
 
-
                             Directory.CreateDirectory(filePathPicked + "\\" + FileName + "\\");
                             FilePathConverter = File_Exists(filePathPicked + "\\" + FileName + "\\" + olAttachment.FileName.ToString());
                             olAttachment.SaveAsFile(FilePathConverter);
@@ -70,7 +69,6 @@ namespace WebScrape
                 finally { }
             }
         }
-
 
         public void save_Emails()
         {
