@@ -16,7 +16,6 @@ using System.Threading.Tasks;
 namespace WebScrape
 
 {
-
     class Main
     {
         const int ArrayDim = 18;
@@ -435,7 +434,7 @@ namespace WebScrape
             Microsoft.Office.Interop.Outlook.Application myOlApp = new Microsoft.Office.Interop.Outlook.Application();
             Microsoft.Office.Interop.Outlook.Explorer objView = myOlApp.ActiveExplorer();
             int k = 1;
-            int i = 1; //NOT SURE IF THIS SHOULD BE ZERO
+            int i = 1;
             foreach (Microsoft.Office.Interop.Outlook.MailItem olMail in objView.Selection) { try { i += 1; } finally { } }
 
             UboundSelectedMailItems = i - 1;
@@ -477,9 +476,7 @@ namespace WebScrape
                     if (olMail.UnRead == null) { Selected_mail_items[k, 9] = ""; } else { Selected_mail_items[k, 9] = olMail.UnRead.ToString(); }
                     if (olMail.CreationTime == null) { Selected_mail_items[k, 10] = ""; } else { Selected_mail_items[k, 10] = olMail.CreationTime.ToString(); }
                     if (olMail.LastModificationTime == null) { Selected_mail_items[k, 11] = ""; } else { Selected_mail_items[k, 11] = olMail.LastModificationTime.ToString(); }
-
                     if (olMail.SentOn == null) { Selected_mail_items[k, 12] = ""; } else { Selected_mail_items[k, 12] = olMail.SentOn.ToString("yyddmm-hhmmss"); }
-
                     if (olMail.ReceivedTime == null) { Selected_mail_items[k, 13] = ""; } else { Selected_mail_items[k, 13] = olMail.ReceivedTime.ToString("yyddmm-hhmmss"); }
                     if (olMail.Importance == null) { Selected_mail_items[k, 14] = ""; } else { Selected_mail_items[k, 14] = olMail.Importance.ToString(); }
                     if (olMail.ReceivedByName == null) { Selected_mail_items[k, 15] = ""; } else { Selected_mail_items[k, 15] = olMail.ReceivedByName.ToString(); }
@@ -492,8 +489,6 @@ namespace WebScrape
                 finally { }
             }
         }
-
-            
 
         void ShowMessageBox(string text, string head = "")
         {
@@ -534,11 +529,5 @@ namespace WebScrape
             return (string[,])(object)nArr;
         }
     }
-
-
-
-
-        
-
 }
 
